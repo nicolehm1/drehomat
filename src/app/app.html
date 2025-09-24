@@ -1,41 +1,43 @@
-<h1 class="text-3xl font-bold underline">
-  Hello world!
-</h1>
 <div class="flex">
-  <div class="flex flex-col flex-wrap gap-4 mb-6">
+  <div class="flex flex-wrap gap-4 mb-6">
 
-    {{drehomat().gammaSpeed}}
     <div>
-      <label class="block font-semibold">Gamma: {{ gamma() | number:'1.2-2' }}</label>
-      <input type="number" class="border px-1 w-20" min="0.5" max="4" step="0.1" [(ngModel)]="gamma">
+      <label class="block font-semibold">Gamma</label>
+      <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800" [(ngModel)]="gamma"></p-inputnumber>
     </div>
 
     <div>
-      <label class="block font-semibold">Speed: {{ gammaSpeed() }}</label>
-      <input type="range" min="-1" max="1" step="0.001" [(ngModel)]="gammaSpeed">
-      <input type="number" class="border px-1 w-20" min="-1" max="1" step="0.001" [(ngModel)]="gammaSpeed">
+      <label class="block font-semibold">Speed</label>
+      <p-inputnumber mode="decimal" [showButtons]="true" [min]="-1" [max]="1" [step]="0.001" [(ngModel)]="gammaSpeed"></p-inputnumber>
     </div>
 
     <div>
       <label class="block font-semibold">W</label>
-      <input type="number" class="border px-1 w-24" min="1" max="800" [(ngModel)]="rectWidth">
+      <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800" [(ngModel)]="rectWidth"></p-inputnumber>
     </div>
 
     <div>
       <label class="block font-semibold">H</label>
-      <input type="number" class="border px-1 w-24" min="1" max="800" [(ngModel)]="rectHeight">
+      <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800" [(ngModel)]="rectHeight"></p-inputnumber>
     </div>
 
     <div>
       <label class="block font-semibold">PivotX</label>
-      <input type="number" class="border px-1 w-24" min="1" max="800" [(ngModel)]="rectPivotX">
+      <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800" [(ngModel)]="rectPivotX"></p-inputnumber>
     </div>
 
     <div>
       <label class="block font-semibold">PivotY</label>
-      <input type="number" class="border px-1 w-24" min="1" max="800" [(ngModel)]="rectPivotY">
+      <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800" [(ngModel)]="rectPivotY"></p-inputnumber>
     </div>
+
+
   </div>
 
+  <p-chart type="line" [data]="plotData()" [options]="options" />
+
+
   <canvas #animationsCanvas class="w-full h-full" width="2000" height="1000"></canvas>
+
+
 </div>
