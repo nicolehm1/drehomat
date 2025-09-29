@@ -1,14 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  computed,
-  ElementRef,
-  inject,
-  OnInit,
-  PLATFORM_ID,
-  signal,
-  viewChild
-} from '@angular/core';
+import {Component, computed, ElementRef, inject, OnInit, PLATFORM_ID, signal, viewChild} from '@angular/core';
 import {Drehomat, Point, Rectangle} from './drehomat';
 import {DrehomatPlotter} from './drehomat-plotter';
 import {interval} from 'rxjs';
@@ -31,7 +21,7 @@ export class App implements OnInit {
   canvasHeight = computed(() => this.canvas()?.nativeElement.height ?? 0);
 
   gamma = signal(0);
-  gammaSpeed = signal(0.01);
+  gammaSpeed = signal(0);
   rectWidth = signal(20);
   rectHeight = signal(200);
   rectPivotX = signal(100);
@@ -49,17 +39,11 @@ export class App implements OnInit {
   drehomat = computed(() => new Drehomat(this.rect(), this.pointPulley(), this.gamma(), this.gammaSpeed()));
   drehomatPlotter = computed(() => this.canvas() ? new DrehomatPlotter(this.drehomat(), this.canvas()!.nativeElement) : null);
 
+  plotValues = signal<{ x: number, y: number }[]>([]);
+
   plotData = computed(() => {
     // get values from drehomat from gamma 0 to 360
-    const documentStyle = getComputedStyle(document.documentElement);
-
-    const values: { x: number, y: number }[] = [];
-    for (let g = 0; g <= Math.PI * 2; g += Math.PI / 30) {
-      const gamma = g + this.gamma();
-
-      const val = this.drehomat().getValues(g + gamma);
-      values.push({x: this.toDegree(gamma), y: val.c});
-    }
+    const values: { x: number, y: number }[] = this.plotValues();
 
     return {
       labels: values.map(x => x.x),
@@ -68,7 +52,7 @@ export class App implements OnInit {
           label: 'length c',
           data: values.map(x => x.y),
           fill: false,
-          borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+          borderColor: getComputedStyle(document.documentElement).getPropertyValue('--p-cyan-500'),
           tension: 0.4
         }
       ]
@@ -83,6 +67,10 @@ export class App implements OnInit {
     interval(10).pipe(takeUntilDestroyed()).subscribe(
       () => {
         this.gamma.set(this.gamma() + this.gammaSpeed());
+
+        this.plotValues.set(
+          [...this.plotValues(), {x: this.toDegree(this.gamma()), y: this.drehomat().getValues(this.gamma()).c}]
+        )
         this.drehomatPlotter()?.plotScene(this.gamma());
       }
     )

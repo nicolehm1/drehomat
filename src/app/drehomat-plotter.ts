@@ -2,6 +2,7 @@ import {Drehomat} from './drehomat';
 
 export class DrehomatPlotter {
   private ctx: CanvasRenderingContext2D;
+
   constructor(private drehomat: Drehomat, private canvas: HTMLCanvasElement) {
     this.ctx = canvas.getContext('2d')!;
   }
@@ -13,43 +14,22 @@ export class DrehomatPlotter {
 
     const values = this.drehomat.getValues(gamma);
 
-    this.lineTo(values.punktA_abs, values.punktB_abs, '', 'black');
-    this.lineTo(values.punktB_abs, values.punktC_abs, '', 'black');
-    this.lineTo(values.punktC_abs, values.punktD_abs, '', 'black');
-    this.lineTo(values.punktD_abs, values.punktA_abs, '', 'black');
+    this.lineTo(values.punktA_abs, values.punktB_abs, '', 'green');
+    this.lineTo(values.punktB_abs, values.punktC_abs, '', 'green');
+    this.lineTo(values.punktC_abs, values.punktD_abs, '', 'green');
+    this.lineTo(values.punktD_abs, values.punktA_abs, '', 'green');
 
     this.point(values.punktX_abs);
 
     // // Linie a (von X nach O) zeichnen
-    this.ctx.beginPath();
-    this.ctx.moveTo(values.punktX_abs.x, values.punktX_abs.y);
-    this.ctx.lineTo(this.drehomat.pointPulley.x, this.drehomat.pointPulley.y);
-    this.ctx.strokeStyle = 'orange';
-    this.ctx.lineWidth = 2;
-    this.ctx.stroke();
-    this.ctx.fillText('a', (values.punktX_abs.x + this.drehomat.pointPulley.x) / 2, (values.punktX_abs.y + this.drehomat.pointPulley.y) / 2 - 10);
 
-    if (values.edge === 'A') {
-      this.lineToPulley(values.punktA_abs, 'c1')
-      this.lineTo(values.punktA_abs, values.punktX_abs, 'b');
-      this.epsilon(values.angleA, values.angleC1, 'ε1');
-      this.point(values.punktA_abs)
-    } else if (values.edge === 'B') {
-      this.lineToPulley(values.punktB_abs, 'c2')
-      this.lineTo(values.punktB_abs, values.punktX_abs, 'b');
-      this.epsilon(values.angleA, values.angleC2, 'ε2');
-      this.point(values.punktB_abs)
-    } else if (values.edge === 'C') {
-      this.lineToPulley(values.punktC_abs, 'c3')
-      this.lineTo(values.punktC_abs, values.punktX_abs, 'b');
-      this.epsilon(values.angleA, values.angleC3, 'ε3');
-      this.point(values.punktC_abs)
-    } else if (values.edge === 'D') {
-      this.lineToPulley(values.punktD_abs, 'c4')
-      this.lineTo(values.punktD_abs, values.punktX_abs, 'b');
-      this.epsilon(values.angleA, values.angleC4, 'ε4');
-      this.point(values.punktD_abs)
-    }
+    this.lineTo(values.punktX_abs, this.drehomat.pointPulley, 'a');
+
+    this.lineToPulley(values.punkt_abs, values.edge)
+    this.lineTo(values.punkt_abs, values.punktX_abs, 'b');
+    this.epsilon(values.angleA, values.angleC, 'ε' + values.edge);
+    this.point(values.punkt_abs);
+
     this.point(this.drehomat.pointPulley);
   }
 

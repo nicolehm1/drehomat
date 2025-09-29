@@ -1,9 +1,8 @@
-
 export type Rectangle = { width: number, height: number, pivotX: number, pivotY: number };
 export type Point = { x: number, y: number };
 
 export class Drehomat {
-  constructor(public rect: Rectangle,public pointPulley : Point, public gamma: number, public gammaSpeed: number) {
+  constructor(public rect: Rectangle, public pointPulley: Point, public gamma: number, public gammaSpeed: number) {
     this.pointA_rel = ({x: -this.rect.width / 2, y: -this.rect.height / 2});
     this.pointB_rel = ({x: +this.rect.width / 2, y: -this.rect.height / 2});
     this.pointC_rel = ({x: +this.rect.width / 2, y: +this.rect.height / 2});
@@ -46,6 +45,7 @@ export class Drehomat {
   }
 
   getValues(angle: number) {
+    let punkt_abs: Point = {x: 0, y: 0};
     const punktA_abs = this.rotate(this.pointA_rel, angle);
     const punktB_abs = this.rotate(this.pointB_rel, angle);
     const punktC_abs = this.rotate(this.pointC_rel, angle);
@@ -54,6 +54,8 @@ export class Drehomat {
     const pointPulley_abs = this.pointPulley;
 
     const angleA = this.angle(pointPulley_abs, punktX_abs);
+
+    let angleC = 0;
     const angleC1 = this.angle(pointPulley_abs, punktA_abs);
     const angleC2 = this.angle(pointPulley_abs, punktB_abs);
     const angleC3 = this.angle(pointPulley_abs, punktC_abs);
@@ -85,18 +87,27 @@ export class Drehomat {
     if (epsilon1 === maxEpsilon) {
       c = length_c1 + length;
       edge = 'A';
+      angleC = angleC1;
+      punkt_abs = punktA_abs;
     } else if (epsilon2 === maxEpsilon) {
       c = length_c2 + length + this.rect.width;
       edge = 'B';
+      angleC = angleC2;
+      punkt_abs = punktB_abs;
     } else if (epsilon3 === maxEpsilon) {
       c = length_c3 + length + this.rect.width + this.rect.height;
       edge = 'C';
+      angleC = angleC3;
+      punkt_abs = punktC_abs;
     } else if (epsilon4 === maxEpsilon) {
       c = length_c4 + length + this.rect.width + this.rect.height + this.rect.width;
       edge = 'D';
+      angleC = angleC4;
+      punkt_abs = punktD_abs;
     }
 
     return {
+      punkt_abs,
       punktA_abs,
       punktB_abs,
       punktC_abs,
@@ -115,6 +126,7 @@ export class Drehomat {
       epsilon3,
       epsilon4,
       angleA,
+      angleC,
       angleC1,
       angleC2,
       angleC3,
