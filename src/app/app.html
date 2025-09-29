@@ -1,43 +1,79 @@
-<div class="flex">
-  <div class="flex flex-wrap gap-4 mb-6">
+<p-splitter [style]="{ height: '100vh' }" class="mb-8">
+  <ng-template #panel>
+    <div class="flex flex-col flex-wrap gap-4">
 
-    <div>
-      <label class="block font-semibold">Gamma</label>
-      <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800" [(ngModel)]="gamma"></p-inputnumber>
+      <div>
+        <label class="block font-semibold">Gamma</label>
+        <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800" [(ngModel)]="gamma"></p-inputnumber>
+      </div>
+
+      <div>
+        <label class="block font-semibold">Speed ({{ umin() }} U/min)</label>
+        <p-inputnumber mode="decimal" [showButtons]="true" [min]="-100" [max]="100" [step]="0.001"
+                       [(ngModel)]="gammaPerSecond" suffix=" rad/s">
+
+        </p-inputnumber>
+      </div>
+
+      <div>
+        <label class="block font-semibold">W</label>
+        <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800"
+                       [(ngModel)]="rectWidth"></p-inputnumber>
+      </div>
+
+      <div>
+        <label class="block font-semibold">H</label>
+        <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800"
+                       [(ngModel)]="rectHeight"></p-inputnumber>
+      </div>
+
+      <div>
+        <label class="block font-semibold">PivotX</label>
+        <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800"
+                       [(ngModel)]="rectPivotX"></p-inputnumber>
+      </div>
+
+      <div>
+        <label class="block font-semibold">PivotY</label>
+        <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800"
+                       [(ngModel)]="rectPivotY"></p-inputnumber>
+      </div>
+
+      <div>
+        <label class="block font-semibold">PulleyX</label>
+        <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="1500"
+                       [(ngModel)]="PulleyX"></p-inputnumber>
+      </div>
+
+      <div>
+        <label class="block font-semibold">PulleyY</label>
+        <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800"
+                       [(ngModel)]="PulleyY"></p-inputnumber>
+      </div>
+      <p-button
+        styleClass="p-button-outlined"
+        [label]="loop() ? 'Pause' : 'Play'"
+        (click)="toggleLoop()"
+        [icon]="loop() ? 'pi pi-pause' : 'pi pi-play'">
+      </p-button>
+
+      <p-button (click)="reset()">reset</p-button>
     </div>
-
-    <div>
-      <label class="block font-semibold">Speed</label>
-      <p-inputnumber mode="decimal" [showButtons]="true" [min]="-1" [max]="1" [step]="0.001" [(ngModel)]="gammaSpeed"></p-inputnumber>
-    </div>
-
-    <div>
-      <label class="block font-semibold">W</label>
-      <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800" [(ngModel)]="rectWidth"></p-inputnumber>
-    </div>
-
-    <div>
-      <label class="block font-semibold">H</label>
-      <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800" [(ngModel)]="rectHeight"></p-inputnumber>
-    </div>
-
-    <div>
-      <label class="block font-semibold">PivotX</label>
-      <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800" [(ngModel)]="rectPivotX"></p-inputnumber>
-    </div>
-
-    <div>
-      <label class="block font-semibold">PivotY</label>
-      <p-inputnumber mode="decimal" [showButtons]="true" [min]="1" [max]="800" [(ngModel)]="rectPivotY"></p-inputnumber>
-    </div>
+  </ng-template>
+  <ng-template #panel>
 
 
-  </div>
+    <p-splitter [style]="{ height: '100%' }" class="mb-8" layout="vertical">
+      <ng-template #panel>
+        <p-chart #chart class="h-full w-full" type="line" [data]="plotData()" [options]="options"/>
+      </ng-template>
+      <ng-template #panel>
+        <div class="h-full  bg-black">
+          <canvas class="h-full bg-black" #animationsCanvas width="1000" height="500"></canvas>
 
-  <p-chart type="line" [data]="plotData()" [options]="options" />
+        </div>
+      </ng-template>
+    </p-splitter>
 
-
-  <canvas #animationsCanvas class="w-full h-full" width="2000" height="1000"></canvas>
-
-
-</div>
+  </ng-template>
+</p-splitter>

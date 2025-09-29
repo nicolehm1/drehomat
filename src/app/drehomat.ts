@@ -81,30 +81,66 @@ export class Drehomat {
     let edge = 'A';
 
     const circumference = this.rect.width + this.rect.height + this.rect.width + this.rect.height; // Umfang des Rechtecks
-    const length = circumference * Math.floor(Math.abs(this.gamma) / (2 * Math.PI)); // Länge des Rechtecks in Abhängigkeit von gamma
+     // Länge des Rechtecks in Abhängigkeit von gamma
 
+    if (this.gammaSpeed > 0){
+      if (epsilon1 === maxEpsilon) {
+        const length = circumference * Math.floor(Math.abs(this.gamma) / (2 * Math.PI));
+        c = length_c1 + length+ this.rect.width + this.rect.height + this.rect.width;
+        edge = 'A';
+        angleC = angleC1;
+        punkt_abs = punktA_abs;
+      } else if (epsilon2 === maxEpsilon) {
+        const length = circumference * Math.floor(Math.abs(this.gamma) / (2 * Math.PI));
+        c = length_c2 + length + this.rect.width+ this.rect.height;
+        edge = 'B';
+        angleC = angleC2;
+        punkt_abs = punktB_abs;
+      } else if (epsilon3 === maxEpsilon) {
+        const length = circumference * Math.floor(Math.abs(this.gamma) / (2 * Math.PI));
+        c = length_c3 + length + this.rect.width;
+        edge = 'C';
+        angleC = angleC3;
+        punkt_abs = punktC_abs;
+      } else if (epsilon4 === maxEpsilon) {
+        const length = circumference * Math.floor(Math.abs(this.gamma + Math.PI) / (2 * Math.PI));
+        c = length_c4 + length ;
+        edge = 'D';
+        angleC = angleC4;
+        punkt_abs = punktD_abs;
+      }
+    }else{
+      if (epsilon1 === maxEpsilon) {
+        const length = circumference * Math.floor(Math.abs(this.gamma) / (2 * Math.PI));
 
-    if (epsilon1 === maxEpsilon) {
-      c = length_c1 + length;
-      edge = 'A';
-      angleC = angleC1;
-      punkt_abs = punktA_abs;
-    } else if (epsilon2 === maxEpsilon) {
-      c = length_c2 + length + this.rect.width;
-      edge = 'B';
-      angleC = angleC2;
-      punkt_abs = punktB_abs;
-    } else if (epsilon3 === maxEpsilon) {
-      c = length_c3 + length + this.rect.width + this.rect.height;
-      edge = 'C';
-      angleC = angleC3;
-      punkt_abs = punktC_abs;
-    } else if (epsilon4 === maxEpsilon) {
-      c = length_c4 + length + this.rect.width + this.rect.height + this.rect.width;
-      edge = 'D';
-      angleC = angleC4;
-      punkt_abs = punktD_abs;
+        c = length_c1 + length + this.rect.height + this.rect.width + this.rect.height;
+        edge = 'A';
+        angleC = angleC1;
+        punkt_abs = punktA_abs;
+      } else if (epsilon2 === maxEpsilon) {
+        const length = circumference * Math.floor(Math.abs(this.gamma - Math.PI) / (2 * Math.PI));
+
+        c = length_c2 + length ;
+        edge = 'B';
+        angleC = angleC2;
+        punkt_abs = punktB_abs;
+      } else if (epsilon3 === maxEpsilon) {
+        const length = circumference * Math.floor(Math.abs(this.gamma) / (2 * Math.PI));
+
+        c = length_c3 + length + this.rect.height;
+        edge = 'C';
+        angleC = angleC3;
+        punkt_abs = punktC_abs;
+      } else if (epsilon4 === maxEpsilon) {
+        const length = circumference * Math.floor(Math.abs(this.gamma) / (2 * Math.PI));
+
+        c = length_c4 + length + this.rect.height + this.rect.width;
+        edge = 'D';
+        angleC = angleC4;
+        punkt_abs = punktD_abs;
+      }
     }
+
 
     return {
       punkt_abs,
