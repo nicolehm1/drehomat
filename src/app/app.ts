@@ -19,17 +19,14 @@ export class App implements AfterViewInit {
   canvas = viewChild<ElementRef<HTMLCanvasElement>>('animationsCanvas');
   chart = viewChild<UIChart>('chart');
 
-  canvasWidth = computed(() => this.canvas()?.nativeElement.width ?? 0);
-  canvasHeight = computed(() => this.canvas()?.nativeElement.height ?? 0);
-
   gamma = signal(0);
   rectWidth = signal(20);
   rectHeight = signal(200);
   rectPivotX = signal(100);
-  rectPivotY = signal(100);
+  rectPivotY = signal(350);
 
   fps = signal(30);
-  gammaPerSecond = signal(0);
+  gammaPerSecond = signal(-0.4);
 
   gammaSpeed = computed(() => this.gammaPerSecond() / this.fps());
   umin = computed(() => (60 * (this.gammaPerSecond() / (2 * Math.PI))).toFixed(2));
@@ -43,7 +40,7 @@ export class App implements AfterViewInit {
     } as Rectangle));
 
   PulleyX = signal(800);
-  PulleyY = signal(400);
+  PulleyY = signal(50);
 
   pointPulley = computed(() => ({x: this.PulleyX(), y : this.PulleyY()} as Point));
   drehomat = computed(() => new Drehomat(this.rect(), this.pointPulley(), this.gamma(), this.gammaSpeed()));
@@ -59,7 +56,8 @@ export class App implements AfterViewInit {
           showLine: true,
           parsing: false,
           borderColor: getComputedStyle(document.documentElement).getPropertyValue('--p-cyan-500'),
-          tension: 0.4
+          tension: 0.4,
+          yAxisID: 'yLength'
         },
         {
           label: 'speed c',
@@ -67,15 +65,12 @@ export class App implements AfterViewInit {
           showLine: true,
           parsing: false,
           borderColor: getComputedStyle(document.documentElement).getPropertyValue('--p-cyan-500'),
-          tension: 0.4
+          tension: 0.4,
+          yAxisID: 'ySpeed'
         }
       ]
     })
   );
-
-  toDegree(rad: number) {
-    return rad * 180 / Math.PI;
-  }
 
   reset() {
 
@@ -85,6 +80,7 @@ export class App implements AfterViewInit {
     this.plotData.update(
       x => {
         x.datasets[0].data = [];
+        x.datasets[1].data = [];
         return x;
       }
     )
@@ -112,17 +108,21 @@ export class App implements AfterViewInit {
 
         this.gamma.set(this.gamma() + this.gammaSpeed());
 
+        const c = this.drehomat().getValues(this.gamma()).c;
+        const c_next = this.drehomat().getValues(this.gamma() + this.gammaSpeed()).c;
+        const c_per_s = (c_next - c) * this.fps();
+
         this.plotData.update(
           x => {
             x.datasets[0].data
               = [
               ...x.datasets[0].data.slice(-5000),
-              {x: this.gamma(), y: this.drehomat().getValues(this.gamma()).c - this.offsetLength()}];
-            //
-            // x.datasets[1].data
-            //   = [
-            //   ...x.datasets[1].data.slice(-5000),
-            //   {x: this.toDegree(this.gamma()), y: (this.drehomat()
+              {x: this.gamma(), y: c - this.offsetLength()}];
+
+            x.datasets[1].data
+              = [
+              ...x.datasets[1].data.slice(-5000),
+              {x: this.gamma(), y: c_per_s}];
 
             return x;
           }
@@ -151,7 +151,16 @@ export class App implements AfterViewInit {
         ticks: { color: string };
         grid: { color: string; drawBorder: boolean }
       };
-      y: { ticks: { color: string }; grid: { color: string; drawBorder: boolean } }
+      yLength: { // ehemals y
+        position: 'left';
+        ticks: { color: string };
+        grid: { color: string; drawBorder: boolean };
+      };
+      ySpeed: {
+        position: 'right';
+        ticks: { color: string };
+        grid: { color: string; drawBorder: boolean };
+      };
     }
   } | null = null;
 
@@ -173,13 +182,24 @@ export class App implements AfterViewInit {
               drawBorder: false
             }
           },
-          y: {
-            ticks: {color: getComputedStyle(document.documentElement).getPropertyValue('--p-text-muted-color')},
-            grid: {
-              color: getComputedStyle(document.documentElement).getPropertyValue('--p-content-border-color'),
-              drawBorder: false
-            }
+
+        yLength: {
+          position: 'left',
+          ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--p-text-muted-color') },
+          grid: {
+            color: getComputedStyle(document.documentElement).getPropertyValue('--p-content-border-color'),
+            drawBorder: false
           }
+        },
+        ySpeed: {
+          position: 'right',
+          ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--p-text-muted-color') },
+          grid: {
+            // optional: kein Gitter für rechte Achse
+            color: 'transparent',
+            drawBorder: false
+          }
+        }
         }
       }
   }
